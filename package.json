@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "omegle-clone",
+=======
+  "name": "oldegle",
+>>>>>>> d925cbd (Update project)
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,7 +14,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+<<<<<<< HEAD
     "express": "^4.21.2",
     "ws": "^8.18.0"
+=======
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.6",
+    "socket.io": "^4.8.1"
+>>>>>>> d925cbd (Update project)
   }
 }

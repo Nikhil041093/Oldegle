@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Oldegle - Omegle Clone</title>
     <style>
         body {
@@ -376,5 +377,45 @@
             peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
         }
     </script>
+=======
+    <title>Oldegle - Random Video Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Profile Section -->
+    <div id="profile-container">
+        <h1>Welcome to Oldegle</h1>
+        <input type="text" id="username" placeholder="Enter your name" />
+        <input type="file" id="profile-pic" accept="image/*" />
+        <button id="save-profile">Save Profile</button>
+    </div>
+
+    <!-- Video Call Section -->
+    <div id="video-call-container">
+        <video id="my-video" autoplay muted></video>
+        <div id="remote-videos"></div>
+    </div>
+
+    <!-- Chat Section -->
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Type a message..." />
+            <button id="send-chat">Send</button>
+        </div>
+    </div>
+
+    <!-- Control Buttons -->
+    <div id="controls">
+        <button id="share-screen">Share Screen</button>
+        <button id="mute-video">Mute Video</button>
+        <button id="mute-audio">Mute Audio</button>
+        <button id="start-call">Start Call</button>
+        <button id="leave-call">Leave Call</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="index.js"></script>
+>>>>>>> d925cbd (Update project)
 </body>
 </html>
