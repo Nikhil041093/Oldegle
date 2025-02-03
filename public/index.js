@@ -3,17 +3,36 @@ let localStream;
 let peerConnection;
 const remoteVideosContainer = document.getElementById('remote-videos');
 const myVideo = document.getElementById('my-video');
+const remoteVideo = document.createElement('video');
+const shareScreenButton = document.getElementById('share-screen');
+const moveButton = document.getElementById('move-video');
+const resizeButton = document.getElementById('resize-video');
+const fullscreenButton = document.getElementById('fullscreen-video');
+const darkModeButton = document.getElementById('dark-mode');
+const muteVideoButton = document.getElementById('mute-video');
+const muteAudioButton = document.getElementById('mute-audio');
+const startCallButton = document.getElementById('start-call');
+const leaveCallButton = document.getElementById('leave-call');
 const chatBox = document.getElementById('chat-box');
 const chatInput = document.getElementById('chat-input');
 const sendChatButton = document.getElementById('send-chat');
-const startCallButton = document.getElementById('start-call');
-const leaveCallButton = document.getElementById('leave-call');
-const muteVideoButton = document.getElementById('mute-video');
-const muteAudioButton = document.getElementById('mute-audio');
-const shareScreenButton = document.getElementById('share-screen');
+
+let isResized = false;
+let isMoving = false;
+
+startCallButton.addEventListener('click', startCall);
+leaveCallButton.addEventListener('click', leaveCall);
+sendChatButton.addEventListener('click', sendMessage);
+darkModeButton.addEventListener('click', toggleDarkMode);
+shareScreenButton.addEventListener('click', shareScreen);
+moveButton.addEventListener('click', moveVideo);
+resizeButton.addEventListener('click', resizeVideo);
+fullscreenButton.addEventListener('click', toggleFullscreen);
+muteVideoButton.addEventListener('click', toggleVideoMute);
+muteAudioButton.addEventListener('click', toggleAudioMute);
 
 socket.on('call-incoming', () => {
-    alert('Incoming call!');
+    showPopupNotification('Incoming call!');
 });
 
 socket.on('receive-message', (message) => {
@@ -27,6 +46,23 @@ socket.on('new-peer', (peerId) => {
     remoteVideo.autoplay = true;
     remoteVideosContainer.appendChild(remoteVideo);
 });
+
+socket.on('update-profile', (profile) => {
+    document.getElementById('profile').style.display = 'none';
+    const profileElement = document.createElement('div');
+    profileElement.innerHTML = `<p>${profile.username}</p><img src="${profile.profilePic}" alt="Profile Pic" width="50" />`;
+    document.getElementById('chat-container').prepend(profileElement);
+});
+
+function showPopupNotification(message) {
+    const popup = document.createElement('div');
+    popup.classList.add('popup-notification');
+    popup.innerHTML = `<p>${message}</p>`;
+    document.body.appendChild(popup);
+    setTimeout(() => {
+        popup.remove();
+    }, 3000);
+}
 
 function displayMessage(message) {
     const msgElement = document.createElement('p');
@@ -62,16 +98,9 @@ function sendMessage() {
     }
 }
 
-function toggleVideoMute() {
-    const videoTrack = localStream.getVideoTracks()[0];
-    videoTrack.enabled = !videoTrack.enabled;
-    muteVideoButton.textContent = videoTrack.enabled ? 'Mute Video' : 'Unmute Video';
-}
-
-function toggleAudioMute() {
-    const audioTrack = localStream.getAudioTracks()[0];
-    audioTrack.enabled = !audioTrack.enabled;
-    muteAudioButton.textContent = audioTrack.enabled ? 'Mute Audio' : 'Unmute Audio';
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    document.getElementById('chat-container').classList.toggle('dark-mode');
 }
 
 function shareScreen() {
@@ -87,9 +116,45 @@ function shareScreen() {
         });
 }
 
-sendChatButton.addEventListener('click', sendMessage);
-startCallButton.addEventListener('click', startCall);
-leaveCallButton.addEventListener('click', leaveCall);
-muteVideoButton.addEventListener('click', toggleVideoMute);
-muteAudioButton.addEventListener('click', toggleAudioMute);
-shareScreenButton.addEventListener('click', shareScreen);
+function moveVideo() {
+    isMoving = !isMoving;
+    moveButton.textContent = isMoving ? 'Stop Moving' : 'Move';
+    if (isMoving) {
+        document.getElementById('video-player').style.position = 'absolute';
+    } else {
+        document.getElementById('video-player').style.position = 'fixed';
+    }
+}
+
+function resizeVideo() {
+    isResized = !isResized;
+    resizeButton.textContent = isResized ? 'Resize Back' : 'Resize';
+    if (isResized) {
+        document.getElementById('video-player').style.width = '640px';
+        document.getElementById('video-player').style.height = '480px';
+    } else {
+        document.getElementById('video-player').style.width = '320px';
+        document.getElementById('video-player').style.height = '240px';
+    }
+}
+
+function toggleFullscreen() {
+    const elem = document.documentElement;
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    } else {
+        elem.requestFullscreen();
+    }
+}
+
+function toggleVideoMute() {
+    const videoTrack = localStream.getVideoTracks()[0];
+    videoTrack.enabled = !videoTrack.enabled;
+    muteVideoButton.textContent = videoTrack.enabled ? 'Mute Video' : 'Unmute Video';
+}
+
+function toggleAudioMute() {
+    const audioTrack = localStream.getAudioTracks()[0];
+    audioTrack.enabled = !audioTrack.enabled;
+    muteAudioButton.textContent = audioTrack.enabled ? 'Mute Audio' : 'Unmute Audio';
+}
